@@ -3,7 +3,11 @@ services:
     name: memo-app-server
     runtime: docker
     plan: free
+    repo: https://github.com/goingboy/memo-app
+    branch: main
     rootDir: server
+    dockerContext: server
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: JAVA_OPTS
         value: -Xmx384m -Xms128m
