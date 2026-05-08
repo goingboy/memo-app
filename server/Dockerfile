@@ -28,7 +28,7 @@ EXPOSE 7860
 # 设置环境变量
 ENV JAVA_OPTS="-Xmx512m -Xms256m"
 ENV SPRING_PROFILES_ACTIVE=prod
-ENV PORT=7860
+ENV SERVER_PORT=7860
 
 # 启动应用
-CMD ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+CMD ["sh", "-c", "java $JAVA_OPTS -Dserver.port=${SERVER_PORT:-7860} -jar app.jar"]
