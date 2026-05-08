@@ -1,21 +1,33 @@
-# 使用官方OpenJDK 17镜像作为基础镜像
-FROM eclipse-temurin:17-jdk-alpine
+# 第一阶段：Maven构建
+FROM maven:3.9-eclipse-temurin-17 AS builder
 
-# 设置工作目录
+WORKDIR /build
+
+# 先复制pom.xml，利用Docker缓存依赖
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
+# 复制源代码并构建
+COPY src ./src
+RUN mvn clean package -DskipTests -B
+
+# 第二阶段：运行
+FROM eclipse-temurin:17-jre-alpine
+
 WORKDIR /app
 
-# 复制Maven构建的jar文件
-COPY target/memo-app-server-1.0.0.jar app.jar
+# 从构建阶段复制jar文件
+COPY --from=builder /build/target/*.jar app.jar
 
 # 创建上传目录
 RUN mkdir -p /app/uploads/avatars /app/uploads/images
 
-# 暴露端口
+# 暴露端口（Render使用PORT环境变量）
 EXPOSE 8080
 
 # 设置环境变量
-ENV JAVA_OPTS="-Xmx512m -Xms256m"
+ENV JAVA_OPTS="-Xmx384m -Xms128m"
 ENV SPRING_PROFILES_ACTIVE=prod
 
 # 启动应用
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+CMD ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

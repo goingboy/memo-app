@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: memo-app-server
+    runtime: docker
+    plan: free
+    rootDir: server
+    envVars:
+      - key: JAVA_OPTS
+        value: -Xmx384m -Xms128m
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+    healthCheckPath: /api/health
