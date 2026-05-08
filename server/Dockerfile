@@ -1,5 +1,5 @@
 # 第一阶段：Maven构建
-FROM maven:3.9-eclipse-temurin-17 AS builder
+FROM maven:3.9-eclipse-temurin:17 AS builder
 
 WORKDIR /build
 
@@ -22,12 +22,13 @@ COPY --from=builder /build/target/*.jar app.jar
 # 创建上传目录
 RUN mkdir -p /app/uploads/avatars /app/uploads/images
 
-# 暴露端口（Render使用PORT环境变量）
-EXPOSE 8080
+# 暴露端口（HF Spaces 要求 7860）
+EXPOSE 7860
 
 # 设置环境变量
-ENV JAVA_OPTS="-Xmx384m -Xms128m"
+ENV JAVA_OPTS="-Xmx512m -Xms256m"
 ENV SPRING_PROFILES_ACTIVE=prod
+ENV PORT=7860
 
 # 启动应用
 CMD ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
