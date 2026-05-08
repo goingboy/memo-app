@@ -1,0 +1,171 @@
+// 变量定义
+$primary-color: #00D4AA;
+$primary-hover: #00B894;
+$bg-dark: #0A0A0A;
+$bg-card: #1A1A1A;
+$border-color: #333333;
+$text-primary: #FFFFFF;
+$text-secondary: #B0B0B0;
+$text-disabled: #666666;
+$danger-color: #FF6B6B;
+$warning-color: #FFB800;
+
+// 全局样式
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background-color: $bg-dark;
+  color: $text-primary;
+  font-family: 'Microsoft YaHei', 'PingFang SC', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+}
+
+// 滚动条样式
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: $bg-dark;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $border-color;
+  border-radius: 3px;
+  
+  &:hover {
+    background: $text-disabled;
+  }
+}
+
+// Element Plus 深色主题覆盖
+.el-button--primary {
+  --el-button-bg-color: #{$primary-color};
+  --el-button-border-color: #{$primary-color};
+  --el-button-hover-bg-color: #{$primary-hover};
+  --el-button-hover-border-color: #{$primary-hover};
+  --el-button-active-bg-color: #{$primary-hover};
+}
+
+.el-input__wrapper {
+  background-color: $bg-card !important;
+  box-shadow: 0 0 0 1px #{$border-color} inset !important;
+  
+  &:hover {
+    box-shadow: 0 0 0 1px #{$primary-color} inset !important;
+  }
+  
+  &.is-focus {
+    box-shadow: 0 0 0 1px #{$primary-color} inset !important;
+  }
+}
+
+.el-input__inner {
+  color: $text-primary !important;
+  
+  &::placeholder {
+    color: $text-disabled !important;
+  }
+}
+
+.el-form-item__label {
+  color: $text-secondary !important;
+}
+
+.el-dialog {
+  background-color: $bg-card !important;
+  border: 1px solid $border-color;
+  border-radius: 12px;
+  
+  .el-dialog__header {
+    border-bottom: 1px solid $border-color;
+    
+    .el-dialog__title {
+      color: $text-primary;
+    }
+  }
+}
+
+.el-message-box {
+  background-color: $bg-card !important;
+  border: 1px solid $border-color;
+}
+
+.el-select-dropdown {
+  background-color: $bg-card !important;
+  border: 1px solid $border-color;
+  
+  .el-select-dropdown__item {
+    color: $text-primary;
+    
+    &.hover, &:hover {
+      background-color: rgba(0, 212, 170, 0.1);
+    }
+    
+    &.selected {
+      color: $primary-color;
+    }
+  }
+}
+
+.el-pagination {
+  .el-pager li {
+    background-color: transparent;
+    color: $text-secondary;
+    
+    &:hover {
+      color: $primary-color;
+    }
+    
+    &.is-active {
+      color: $primary-color;
+    }
+  }
+}
+
+// 卡片样式
+.memo-card {
+  background-color: $bg-card;
+  border: 1px solid $border-color;
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  
+  &:hover {
+    border-color: $primary-color;
+    box-shadow: 0 0 20px rgba(0, 212, 170, 0.15);
+    transform: translateY(-2px);
+  }
+}
+
+// 页面容器
+.page-container {
+  min-height: 100vh;
+  background-color: $bg-dark;
+}
+
+// 动画
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
