@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node -e \"const fs=require('fs');const p=require('path');const src=p.join(__dirname,'dist','index.html');const dst=p.join(__dirname,'dist','404.html');fs.copyFileSync(src,dst);console.log('404.html created from index.html')\"",
     "preview": "vite preview"
   },
   "dependencies": {
