@@ -16,7 +16,7 @@
         />
       </div>
       <div class="header-right">
-        <el-button type="primary" :icon="Plus" @click="$router.push('/memo/create')">
+        <el-button type="primary" :icon="Plus" @click="$router.push('/memo/new')">
           新建
         </el-button>
         <el-dropdown @command="handleCommand">
@@ -92,7 +92,7 @@
         
         <div v-else-if="memoStore.list.length === 0" class="empty-container">
           <el-empty description="还没有备忘录" :image-size="120">
-            <el-button type="primary" @click="$router.push('/memo/create')">创建第一个备忘录</el-button>
+            <el-button type="primary" @click="$router.push('/memo/new')">创建第一个备忘录</el-button>
           </el-empty>
         </div>
         
