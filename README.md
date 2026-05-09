@@ -1,3 +1,13 @@
+---
+title: Memo App Server
+emoji: 📝
+colorFrom: blue
+colorTo: green
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # 📝 Memo App - 全栈便签应用
 
 [![Vue 3](https://img.shields.io/badge/Vue-3.4.21-4FC08D?logo=vue.js)](https://vuejs.org/)
