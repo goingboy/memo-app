@@ -1,5 +1,5 @@
 # 第一阶段：Maven构建
-FROM maven:3.9-eclipse-temurin:17 AS builder
+FROM maven:3.9-eclipse-temurin:21 AS builder
 
 WORKDIR /build
 
@@ -12,7 +12,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests -B
 
 # 第二阶段：运行
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
@@ -20,7 +20,7 @@ WORKDIR /app
 COPY --from=builder /build/target/*.jar app.jar
 
 # 创建上传目录
-RUN mkdir -p /app/uploads/avatars /app/uploads/images
+RUN mkdir -p /app/uploads/avatars /app/uploads/images /app/data
 
 # 暴露端口（HF Spaces 要求 7860）
 EXPOSE 7860
