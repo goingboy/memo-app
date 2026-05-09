@@ -244,6 +244,8 @@ const fetchMemos = async () => {
       groupId: groupStore.selectedId,
       keyword: searchKeyword.value
     })
+  } catch (error) {
+    ElMessage.error('加载备忘录失败，请稍后重试')
   } finally {
     loading.value = false
   }

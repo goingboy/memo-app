@@ -5,7 +5,7 @@ spring:
   application:
     name: memo-app-server
   datasource:
-    url: jdbc:h2:file:./data/memo_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:file:./data/memo_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL
     driver-class-name: org.h2.Driver
     username: sa
     password: 
@@ -14,7 +14,11 @@ spring:
       enabled: false
   sql:
     init:
-      mode: never
+      mode: always
+      encoding: UTF-8
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
 
 mybatis-plus:
   configuration:

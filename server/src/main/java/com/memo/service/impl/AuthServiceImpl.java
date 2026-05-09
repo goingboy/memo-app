@@ -40,19 +40,30 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Result register(RegisterDTO dto) {
+        // 检查账号名是否已存在
+        LambdaQueryWrapper<SysUser> usernameWrapper = new LambdaQueryWrapper<>();
+        usernameWrapper.eq(SysUser::getUsername, dto.getUsername());
+        SysUser existByUsername = sysUserMapper.selectOne(usernameWrapper);
+        if (existByUsername != null) {
+            return Result.error(500, "该账号名已被注册");
+        }
+
         // 检查邮箱是否已存在
-        LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(SysUser::getEmail, dto.getEmail());
-        SysUser existUser = sysUserMapper.selectOne(wrapper);
-        if (existUser != null) {
-            return Result.error(500, "该邮箱已被注册");
+        LambdaQueryWrapper<SysUser> emailWrapper = new LambdaQueryWrapper<>();
+        emailWrapper.eq(SysUser::getEmail, dto.getEmail());
+        SysUser existByEmail = sysUserMapper.selectOne(emailWrapper);
+        if (existByEmail != null) {
+            return Result.error(500, "该邮箱已被绑定");
         }
 
         // 创建用户
         SysUser user = new SysUser();
+        user.setUsername(dto.getUsername());
         user.setEmail(dto.getEmail());
         user.setPassword(BCrypt.hashpw(dto.getPassword()));
-        user.setNickname(dto.getNickname());
+        // 昵称为空时使用账号名
+        user.setNickname(dto.getNickname() != null && !dto.getNickname().isEmpty()
+                ? dto.getNickname() : dto.getUsername());
         user.setStatus(1);
 
         // 管理员邮箱自动设为管理员
@@ -81,12 +92,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Result login(LoginDTO dto) {
-        // 根据邮箱查询用户
+        // 根据账号名查询用户
         LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(SysUser::getEmail, dto.getEmail());
+        wrapper.eq(SysUser::getUsername, dto.getUsername());
         SysUser user = sysUserMapper.selectOne(wrapper);
         if (user == null) {
-            return Result.error(500, "邮箱或密码错误");
+            return Result.error(500, "账号名或密码错误");
         }
 
         // 检查用户状态
@@ -96,7 +107,7 @@ public class AuthServiceImpl implements AuthService {
 
         // 验证密码
         if (!BCrypt.checkpw(dto.getPassword(), user.getPassword())) {
-            return Result.error(500, "邮箱或密码错误");
+            return Result.error(500, "账号名或密码错误");
         }
 
         // 登录

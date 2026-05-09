@@ -8,6 +8,7 @@
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS sys_user (
     id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username    VARCHAR(50)     NOT NULL,
     email       VARCHAR(255)    NOT NULL,
     password    VARCHAR(255)    NOT NULL,
     nickname    VARCHAR(50)     DEFAULT NULL,
@@ -17,6 +18,9 @@ CREATE TABLE IF NOT EXISTS sys_user (
     created_at  TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
     updated_at  TIMESTAMP       DEFAULT CURRENT_TIMESTAMP
 );
+
+-- 账号名唯一索引
+CREATE UNIQUE INDEX IF NOT EXISTS idx_username ON sys_user(username);
 
 -- 邮箱唯一索引
 CREATE UNIQUE INDEX IF NOT EXISTS idx_email ON sys_user(email);
@@ -41,7 +45,7 @@ CREATE TABLE IF NOT EXISTS memo (
     id          BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id     BIGINT          NOT NULL,
     group_id    BIGINT          DEFAULT NULL,
-    title       VARCHAR(255)    NOT NULL,
+    title       VARCHAR(255)    DEFAULT '',
     content     CLOB            DEFAULT NULL,
     is_deleted  TINYINT         DEFAULT 0,
     deleted_at  TIMESTAMP       DEFAULT NULL,
