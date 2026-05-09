@@ -55,7 +55,7 @@ const form = reactive({
 })
 
 const avatarUrl = computed(() => {
-  return userStore.userInfo?.avatar || ''
+  return userStore.avatar || ''
 })
 
 const uploadUrl = computed(() => {
@@ -64,14 +64,14 @@ const uploadUrl = computed(() => {
 
 const uploadHeaders = computed(() => {
   return {
-    Authorization: `Bearer ${localStorage.getItem('token')}`
+    Authorization: localStorage.getItem('token')
   }
 })
 
 onMounted(() => {
-  if (userStore.userInfo) {
-    form.nickname = userStore.userInfo.nickname || ''
-    form.email = userStore.userInfo.email || ''
+  if (userStore.user) {
+    form.nickname = userStore.user.nickname || ''
+    form.email = userStore.user.email || ''
   }
 })
 
@@ -92,7 +92,8 @@ const beforeAvatarUpload = (file) => {
 }
 
 const handleAvatarSuccess = (response) => {
-  userStore.userInfo.avatar = response.url
+  userStore.user.avatar = response.data?.url || response.url
+  userStore.setUser(userStore.user)
   ElMessage.success('头像更新成功')
 }
 
@@ -100,7 +101,8 @@ const handleSave = async () => {
   saving.value = true
   try {
     await updateProfile({ nickname: form.nickname })
-    userStore.userInfo.nickname = form.nickname
+    userStore.user.nickname = form.nickname
+    userStore.setUser(userStore.user)
     ElMessage.success('资料已更新')
   } catch (error) {
     // 错误已处理

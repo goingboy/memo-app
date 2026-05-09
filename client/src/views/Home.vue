@@ -254,7 +254,7 @@ const handleCommand = (cmd) => {
 
 const handleMemoCommand = async (cmd, memo) => {
   if (cmd === 'edit') {
-    router.push(`/memo/edit/${memo.id}`)
+    router.push(`/memo/${memo.id}/edit`)
   } else if (cmd === 'delete') {
     await ElMessageBox.confirm('确定要删除这篇备忘录吗？删除后可从垃圾站恢复', '提示', {
       type: 'warning'

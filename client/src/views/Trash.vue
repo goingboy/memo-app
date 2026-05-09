@@ -65,7 +65,7 @@ const formatTime = (time) => {
 }
 
 onMounted(() => {
-  memoStore.fetchTrashList()
+  memoStore.fetchTrash()
 })
 
 const handleRestore = async (id) => {
@@ -84,7 +84,7 @@ const handlePermanentDelete = async (id) => {
       '警告',
       { type: 'error', confirmButtonText: '永久删除' }
     )
-    await memoStore.permanentDelete(id)
+    await memoStore.forceDelete(id)
     ElMessage.success('已永久删除')
   } catch (error) {
     if (error !== 'cancel') {
@@ -95,7 +95,7 @@ const handlePermanentDelete = async (id) => {
 
 const handlePageChange = (page) => {
   currentPage.value = page
-  memoStore.fetchTrashList(page, pageSize.value)
+  memoStore.fetchTrash({ page, pageSize: pageSize.value })
 }
 </script>
 

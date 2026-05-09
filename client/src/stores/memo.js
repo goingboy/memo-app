@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { getMemoList, createMemo, updateMemo, deleteMemo, getTrashList, restoreMemo, forceDeleteMemo } from '@/api/memo'
+import { getMemoList, getMemoDetail, createMemo, updateMemo, deleteMemo, getTrashList, restoreMemo, forceDeleteMemo } from '@/api/memo'
 
 export const useMemoStore = defineStore('memo', {
   state: () => ({

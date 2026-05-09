@@ -70,7 +70,7 @@ onMounted(async () => {
 })
 
 const handleEdit = () => {
-  router.push(`/memo/edit/${route.params.id}`)
+  router.push(`/memo/${route.params.id}/edit`)
 }
 
 const handleDelete = async () => {
