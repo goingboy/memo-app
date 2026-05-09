@@ -1,14 +1,22 @@
-// 变量定义
-$primary-color: #00D4AA;
-$primary-hover: #00B894;
-$bg-dark: #0A0A0A;
-$bg-card: #1A1A1A;
-$border-color: #333333;
-$text-primary: #FFFFFF;
-$text-secondary: #B0B0B0;
-$text-disabled: #666666;
-$danger-color: #FF6B6B;
-$warning-color: #FFB800;
+// 变量定义 - 优化配色方案
+$primary-color: #10B981;
+$primary-hover: #059669;
+$primary-light: rgba(16, 185, 129, 0.1);
+$bg-dark: #0F172A;
+$bg-darker: #020617;
+$bg-card: #1E293B;
+$bg-card-hover: #334155;
+$border-color: #334155;
+$border-light: #475569;
+$text-primary: #F1F5F9;
+$text-secondary: #94A3B8;
+$text-muted: #64748B;
+$text-disabled: #475569;
+$danger-color: #EF4444;
+$danger-hover: #DC2626;
+$warning-color: #F59E0B;
+$info-color: #3B82F6;
+$success-color: #10B981;
 
 // 全局样式
 * {
@@ -22,10 +30,11 @@ html, body {
   height: 100%;
   background-color: $bg-dark;
   color: $text-primary;
-  font-family: 'Microsoft YaHei', 'PingFang SC', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 16px;
-  line-height: 1.5;
+  font-family: 'Inter', 'Microsoft YaHei', 'PingFang SC', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #app {
@@ -35,20 +44,21 @@ html, body {
 
 // 滚动条样式
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: $bg-dark;
+  background: $bg-darker;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: $border-color;
-  border-radius: 3px;
+  background: $border-light;
+  border-radius: 4px;
   
   &:hover {
-    background: $text-disabled;
+    background: $text-muted;
   }
 }
 
@@ -59,14 +69,23 @@ html, body {
   --el-button-hover-bg-color: #{$primary-hover};
   --el-button-hover-border-color: #{$primary-hover};
   --el-button-active-bg-color: #{$primary-hover};
+  --el-button-text-color: #fff;
+}
+
+.el-button--danger {
+  --el-button-bg-color: #{$danger-color};
+  --el-button-border-color: #{$danger-color};
+  --el-button-hover-bg-color: #{$danger-hover};
+  --el-button-hover-border-color: #{$danger-hover};
 }
 
 .el-input__wrapper {
   background-color: $bg-card !important;
   box-shadow: 0 0 0 1px #{$border-color} inset !important;
+  border-radius: 8px !important;
   
   &:hover {
-    box-shadow: 0 0 0 1px #{$primary-color} inset !important;
+    box-shadow: 0 0 0 1px #{$border-light} inset !important;
   }
   
   &.is-focus {
@@ -76,48 +95,97 @@ html, body {
 
 .el-input__inner {
   color: $text-primary !important;
+  font-size: 14px;
   
   &::placeholder {
-    color: $text-disabled !important;
+    color: $text-muted !important;
   }
 }
 
 .el-form-item__label {
   color: $text-secondary !important;
+  font-weight: 500;
 }
 
 .el-dialog {
   background-color: $bg-card !important;
   border: 1px solid $border-color;
-  border-radius: 12px;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   
   .el-dialog__header {
     border-bottom: 1px solid $border-color;
+    padding: 20px 24px;
     
     .el-dialog__title {
       color: $text-primary;
+      font-weight: 600;
+      font-size: 16px;
     }
+  }
+  
+  .el-dialog__body {
+    padding: 24px;
+  }
+  
+  .el-dialog__footer {
+    border-top: 1px solid $border-color;
+    padding: 16px 24px;
   }
 }
 
 .el-message-box {
   background-color: $bg-card !important;
   border: 1px solid $border-color;
+  border-radius: 16px;
+  
+  .el-message-box__title {
+    color: $text-primary;
+  }
+  
+  .el-message-box__message {
+    color: $text-secondary;
+  }
 }
 
 .el-select-dropdown {
   background-color: $bg-card !important;
   border: 1px solid $border-color;
+  border-radius: 8px;
   
   .el-select-dropdown__item {
-    color: $text-primary;
+    color: $text-secondary;
     
     &.hover, &:hover {
-      background-color: rgba(0, 212, 170, 0.1);
+      background-color: $primary-light;
+      color: $text-primary;
     }
     
     &.selected {
       color: $primary-color;
+      font-weight: 600;
+    }
+  }
+}
+
+.el-dropdown-menu {
+  background-color: $bg-card !important;
+  border: 1px solid $border-color;
+  border-radius: 8px;
+  padding: 8px;
+  
+  .el-dropdown-menu__item {
+    color: $text-secondary;
+    border-radius: 6px;
+    padding: 8px 12px;
+    
+    &:hover {
+      background-color: $primary-light;
+      color: $text-primary;
+    }
+    
+    .el-icon {
+      margin-right: 8px;
     }
   }
 }
@@ -126,14 +194,32 @@ html, body {
   .el-pager li {
     background-color: transparent;
     color: $text-secondary;
+    border-radius: 6px;
+    
+    &:hover {
+      color: $primary-color;
+      background-color: $primary-light;
+    }
+    
+    &.is-active {
+      color: #fff;
+      background-color: $primary-color;
+    }
+  }
+  
+  .btn-prev, .btn-next {
+    background-color: transparent;
+    color: $text-secondary;
     
     &:hover {
       color: $primary-color;
     }
-    
-    &.is-active {
-      color: $primary-color;
-    }
+  }
+}
+
+.el-empty {
+  .el-empty__description {
+    color: $text-muted;
   }
 }
 
@@ -143,12 +229,12 @@ html, body {
   border: 1px solid $border-color;
   border-radius: 12px;
   padding: 16px;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   
   &:hover {
     border-color: $primary-color;
-    box-shadow: 0 0 20px rgba(0, 212, 170, 0.15);
+    box-shadow: 0 0 0 1px $primary-color, 0 10px 40px rgba(16, 185, 129, 0.15);
     transform: translateY(-2px);
   }
 }
@@ -168,4 +254,29 @@ html, body {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+// 通用按钮样式优化
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  color: $text-muted;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  &:hover {
+    background: $bg-card-hover;
+    color: $text-primary;
+  }
+  
+  &.danger:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: $danger-color;
+  }
 }

@@ -3,7 +3,10 @@
     <!-- 顶部导航 -->
     <header class="home-header">
       <div class="header-left">
-        <h1 class="logo">备忘录</h1>
+        <div class="logo">
+          <el-icon :size="28" color="#10B981"><Document /></el-icon>
+          <span>备忘录</span>
+        </div>
       </div>
       <div class="header-center">
         <el-input 
@@ -16,14 +19,18 @@
         />
       </div>
       <div class="header-right">
-        <el-button type="primary" :icon="Plus" @click="$router.push('/memo/new')">
-          新建
+        <el-button type="primary" size="large" :icon="Plus" @click="$router.push('/memo/new')">
+          新建备忘录
         </el-button>
-        <el-dropdown @command="handleCommand">
+        <el-dropdown @command="handleCommand" trigger="click">
           <div class="user-info">
-            <el-avatar :size="36" :src="userStore.avatar">
-              {{ userStore.nickname?.charAt(0) }}
+            <el-avatar :size="40" :src="userStore.avatar" class="user-avatar">
+              {{ userStore.nickname?.charAt(0) || userStore.username?.charAt(0) || '?' }}
             </el-avatar>
+            <div class="user-meta">
+              <span class="user-name">{{ userStore.nickname || userStore.username || '用户' }}</span>
+              <el-icon><ArrowDown /></el-icon>
+            </div>
           </div>
           <template #dropdown>
             <el-dropdown-menu>
@@ -31,10 +38,10 @@
                 <el-icon><User /></el-icon>个人资料
               </el-dropdown-item>
               <el-dropdown-item command="trash">
-                <el-icon><Delete /></el-icon>垃圾站
+                <el-icon><Delete /></el-icon>回收站
               </el-dropdown-item>
               <el-dropdown-item v-if="userStore.isAdmin" command="admin">
-                <el-icon><Setting /></el-icon>管理
+                <el-icon><Setting /></el-icon>系统管理
               </el-dropdown-item>
               <el-dropdown-item divided command="logout">
                 <el-icon><SwitchButton /></el-icon>退出登录
@@ -48,38 +55,50 @@
     <div class="home-content">
       <!-- 左侧边栏 -->
       <aside class="sidebar">
-        <div class="sidebar-header">
-          <span>分组</span>
-          <el-button text size="small" :icon="Plus" @click="handleCreateGroup">新建</el-button>
-        </div>
-        <div class="group-list">
-          <div 
-            class="group-item"
-            :class="{ active: !groupStore.selectedId }"
-            @click="handleSelectGroup(null)"
-          >
-            <el-icon><FolderOpened /></el-icon>
-            <span>全部备忘录</span>
-            <span class="count">{{ memoStore.total }}</span>
+        <div class="sidebar-section">
+          <div class="sidebar-header">
+            <span class="section-title">分组</span>
+            <el-button text type="primary" size="small" :icon="Plus" @click="handleCreateGroup">
+              新建
+            </el-button>
           </div>
-          <div 
-            v-for="group in groupStore.list" 
-            :key="group.id"
-            class="group-item"
-            :class="{ active: groupStore.selectedId === group.id }"
-            @click="handleSelectGroup(group.id)"
-          >
-            <el-icon><Folder /></el-icon>
-            <span>{{ group.name }}</span>
-            <el-dropdown trigger="click" @command="(cmd) => handleGroupCommand(cmd, group)">
-              <el-icon class="group-more"><MoreFilled /></el-icon>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item command="edit">编辑</el-dropdown-item>
-                  <el-dropdown-item v-if="group.isDefault !== 1" command="delete">删除</el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
+          <div class="group-list">
+            <div 
+              class="group-item"
+              :class="{ active: !groupStore.selectedId }"
+              @click="handleSelectGroup(null)"
+            >
+              <div class="group-info">
+                <el-icon :size="18"><FolderOpened /></el-icon>
+                <span>全部备忘录</span>
+              </div>
+              <span class="count">{{ memoStore.total || memoStore.list.length }}</span>
+            </div>
+            <div 
+              v-for="group in groupStore.list" 
+              :key="group.id"
+              class="group-item"
+              :class="{ active: groupStore.selectedId === group.id }"
+              @click="handleSelectGroup(group.id)"
+            >
+              <div class="group-info">
+                <el-icon :size="18"><Folder /></el-icon>
+                <span>{{ group.name }}</span>
+              </div>
+              <el-dropdown trigger="click" @command="(cmd) => handleGroupCommand(cmd, group)">
+                <el-icon class="group-more" @click.stop><MoreFilled /></el-icon>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item command="edit">
+                      <el-icon><Edit /></el-icon>编辑
+                    </el-dropdown-item>
+                    <el-dropdown-item v-if="group.isDefault !== 1" command="delete">
+                      <el-icon><Delete /></el-icon>删除
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </div>
           </div>
         </div>
       </aside>
@@ -87,12 +106,19 @@
       <!-- 右侧内容区 -->
       <main class="main-content">
         <div v-if="loading" class="loading-container">
-          <el-icon class="is-loading"><Loading /></el-icon>
+          <el-skeleton :rows="3" animated />
         </div>
         
         <div v-else-if="memoStore.list.length === 0" class="empty-container">
-          <el-empty description="还没有备忘录" :image-size="120">
-            <el-button type="primary" @click="$router.push('/memo/new')">创建第一个备忘录</el-button>
+          <el-empty description="还没有备忘录" :image-size="160">
+            <template #image>
+              <div class="empty-illustration">
+                <el-icon :size="80" color="#475569"><Document /></el-icon>
+              </div>
+            </template>
+            <el-button type="primary" size="large" :icon="Plus" @click="$router.push('/memo/new')">
+              创建第一个备忘录
+            </el-button>
           </el-empty>
         </div>
         
@@ -101,23 +127,37 @@
             v-for="memo in memoStore.list" 
             :key="memo.id"
             class="memo-card"
-            @click="$router.push(`/memo/${memo.id}`)"
           >
             <div class="memo-card-header">
-              <h3 class="memo-title">{{ memo.title || '无标题' }}</h3>
-              <el-dropdown trigger="click" @command="(cmd) => handleMemoCommand(cmd, memo)">
-                <el-icon class="memo-more" @click.stop><MoreFilled /></el-icon>
-                <template #dropdown>
-                  <el-dropdown-menu>
-                    <el-dropdown-item command="edit">编辑</el-dropdown-item>
-                    <el-dropdown-item command="delete" divided>删除</el-dropdown-item>
-                  </el-dropdown-menu>
-                </template>
-              </el-dropdown>
+              <h3 class="memo-title" @click="$router.push(`/memo/${memo.id}`)">{{ memo.title || '无标题' }}</h3>
+              <div class="memo-actions">
+                <el-button 
+                  text 
+                  circle 
+                  size="small"
+                  @click.stop="$router.push(`/memo/${memo.id}/edit`)"
+                >
+                  <el-icon><Edit /></el-icon>
+                </el-button>
+                <el-button 
+                  text 
+                  circle 
+                  size="small"
+                  type="danger"
+                  @click.stop="handleDeleteMemo(memo)"
+                >
+                  <el-icon><Delete /></el-icon>
+                </el-button>
+              </div>
             </div>
-            <div class="memo-content">{{ getPreview(memo.content) }}</div>
-            <div class="memo-footer">
-              <span class="memo-time">{{ formatTime(memo.updatedAt) }}</span>
+            <div class="memo-content" @click="$router.push(`/memo/${memo.id}`)">
+              {{ getPreview(memo.content) }}
+            </div>
+            <div class="memo-footer" @click="$router.push(`/memo/${memo.id}`)">
+              <div class="memo-meta">
+                <el-tag v-if="memo.groupName" size="small" effect="plain">{{ memo.groupName }}</el-tag>
+                <span class="memo-time">{{ formatTime(memo.updatedAt) }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -128,7 +168,7 @@
             v-model:current-page="currentPage"
             :page-size="pageSize"
             :total="memoStore.total"
-            layout="prev, pager, next"
+            layout="prev, pager, next, jumper"
             @current-change="handlePageChange"
           />
         </div>
@@ -154,7 +194,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Search, User, Delete, Setting, SwitchButton, Folder, FolderOpened, MoreFilled, Loading } from '@element-plus/icons-vue'
+import { Plus, Search, User, Delete, Setting, SwitchButton, Folder, FolderOpened, MoreFilled, Edit, Document, ArrowDown } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
 import { useMemoStore } from '@/stores/memo'
 import { useGroupStore } from '@/stores/group'
@@ -201,7 +241,8 @@ const fetchMemos = async () => {
     await memoStore.fetchList({
       page: currentPage.value,
       pageSize,
-      groupId: groupStore.selectedId
+      groupId: groupStore.selectedId,
+      keyword: searchKeyword.value
     })
   } finally {
     loading.value = false
@@ -215,7 +256,6 @@ const handleSelectGroup = (id) => {
 }
 
 const handleSearch = () => {
-  // 简单实现，实际可加防抖
   currentPage.value = 1
   fetchMemos()
 }
@@ -226,7 +266,6 @@ const handlePageChange = () => {
 
 const getPreview = (content) => {
   if (!content) return '暂无内容'
-  // 去掉Markdown标记获取纯文本预览
   return content.replace(/[#*`\[\]]/g, '').substring(0, 100) + (content.length > 100 ? '...' : '')
 }
 
@@ -252,17 +291,13 @@ const handleCommand = (cmd) => {
   }
 }
 
-const handleMemoCommand = async (cmd, memo) => {
-  if (cmd === 'edit') {
-    router.push(`/memo/${memo.id}/edit`)
-  } else if (cmd === 'delete') {
-    await ElMessageBox.confirm('确定要删除这篇备忘录吗？删除后可从垃圾站恢复', '提示', {
-      type: 'warning'
-    })
-    await memoStore.remove(memo.id)
-    ElMessage.success('已移入垃圾站')
-    fetchMemos()
-  }
+const handleDeleteMemo = async (memo) => {
+  await ElMessageBox.confirm('确定要删除这篇备忘录吗？删除后可从回收站恢复', '提示', {
+    type: 'warning'
+  })
+  await memoStore.remove(memo.id)
+  ElMessage.success('已移入回收站')
+  fetchMemos()
 }
 
 const handleCreateGroup = () => {
@@ -312,7 +347,7 @@ const handleSaveGroup = async () => {
 .home-page {
   width: 100%;
   min-height: 100vh;
-  background-color: #0A0A0A;
+  background-color: #0F172A;
   display: flex;
   flex-direction: column;
 }
@@ -321,29 +356,34 @@ const handleSaveGroup = async () => {
   height: 64px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0 24px;
-  background: #1A1A1A;
-  border-bottom: 1px solid #333;
+  background: #1E293B;
+  border-bottom: 1px solid #334155;
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
 .header-left {
-  flex: 0 0 auto;
-  
   .logo {
-    font-size: 20px;
-    font-weight: 700;
-    color: #00D4AA;
-    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    
+    span {
+      font-size: 20px;
+      font-weight: 700;
+      color: #F1F5F9;
+      letter-spacing: 1px;
+    }
   }
 }
 
 .header-center {
   flex: 1;
-  max-width: 400px;
-  margin: 0 auto;
+  max-width: 480px;
+  margin: 0 24px;
   
   .search-input {
     width: 100%;
@@ -351,13 +391,46 @@ const handleSaveGroup = async () => {
 }
 
 .header-right {
-  flex: 0 0 auto;
   display: flex;
   align-items: center;
   gap: 16px;
   
   .user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     cursor: pointer;
+    padding: 4px 12px 4px 4px;
+    border-radius: 24px;
+    transition: background 0.2s;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .user-avatar {
+      border: 2px solid #10B981;
+    }
+    
+    .user-meta {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      
+      .user-name {
+        font-size: 14px;
+        color: #F1F5F9;
+        max-width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      
+      .el-icon {
+        color: #64748B;
+        font-size: 12px;
+      }
+    }
   }
 }
 
@@ -368,71 +441,88 @@ const handleSaveGroup = async () => {
 }
 
 .sidebar {
-  width: 240px;
-  background: #1A1A1A;
-  border-right: 1px solid #333;
+  width: 260px;
+  background: #1E293B;
+  border-right: 1px solid #334155;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+}
+
+.sidebar-section {
+  padding: 16px;
 }
 
 .sidebar-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px 8px;
-  color: #B0B0B0;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  
+  .section-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
 }
 
 .group-list {
-  flex: 1;
-  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .group-item {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 10px 12px;
   border-radius: 8px;
   cursor: pointer;
-  color: #B0B0B0;
+  color: #94A3B8;
   font-size: 14px;
   transition: all 0.2s;
-  gap: 8px;
   
   &:hover {
-    background: rgba(0, 212, 170, 0.1);
-    color: #fff;
+    background: rgba(16, 185, 129, 0.08);
+    color: #F1F5F9;
   }
   
   &.active {
-    background: rgba(0, 212, 170, 0.15);
-    color: #00D4AA;
+    background: rgba(16, 185, 129, 0.15);
+    color: #10B981;
+    
+    .count {
+      color: #10B981;
+    }
   }
   
-  .el-icon {
-    font-size: 16px;
-  }
-  
-  span {
-    flex: 1;
+  .group-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
   
   .count {
-    flex: 0 0 auto;
-    color: #666;
     font-size: 12px;
+    color: #64748B;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2px 8px;
+    border-radius: 10px;
   }
   
   .group-more {
     opacity: 0;
     font-size: 14px;
+    padding: 4px;
+    border-radius: 4px;
     
     &:hover {
-      color: #00D4AA;
+      color: #10B981;
+      background: rgba(16, 185, 129, 0.1);
     }
   }
   
@@ -443,40 +533,45 @@ const handleSaveGroup = async () => {
 
 .main-content {
   flex: 1;
-  padding: 24px;
+  padding: 24px 32px;
   overflow-y: auto;
+  background: #0F172A;
 }
 
-.loading-container,
+.loading-container {
+  padding: 24px;
+}
+
 .empty-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 400px;
-  font-size: 48px;
-  color: #666;
+  
+  .empty-illustration {
+    opacity: 0.5;
+  }
 }
 
 .memo-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
 }
 
 .memo-card {
-  background: #1A1A1A;
-  border: 1px solid #333;
+  background: #1E293B;
+  border: 1px solid #334155;
   border-radius: 12px;
   padding: 16px;
-  cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   min-height: 160px;
   
   &:hover {
-    border-color: #00D4AA;
-    box-shadow: 0 4px 20px rgba(0, 212, 170, 0.1);
+    border-color: #10B981;
+    box-shadow: 0 0 0 1px #10B981, 0 10px 40px rgba(16, 185, 129, 0.1);
     transform: translateY(-2px);
   }
 }
@@ -485,30 +580,44 @@ const handleSaveGroup = async () => {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  gap: 8px;
   
   .memo-title {
     font-size: 16px;
     font-weight: 600;
-    color: #fff;
+    color: #F1F5F9;
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-  
-  .memo-more {
-    opacity: 0;
-    color: #666;
-    font-size: 16px;
-    transition: opacity 0.2s;
+    cursor: pointer;
     
     &:hover {
-      color: #00D4AA;
+      color: #10B981;
     }
   }
   
-  &:hover .memo-more {
+  .memo-actions {
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    
+    .el-button {
+      color: #64748B;
+      
+      &:hover {
+        color: #10B981;
+      }
+      
+      &.is-danger:hover {
+        color: #EF4444;
+      }
+    }
+  }
+  
+  &:hover .memo-actions {
     opacity: 1;
   }
 }
@@ -516,22 +625,43 @@ const handleSaveGroup = async () => {
 .memo-content {
   flex: 1;
   font-size: 13px;
-  color: #888;
+  color: #94A3B8;
   line-height: 1.6;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
+  cursor: pointer;
+  
+  &:hover {
+    color: #CBD5E1;
+  }
 }
 
 .memo-footer {
   margin-top: 12px;
-  display: flex;
-  justify-content: flex-end;
+  cursor: pointer;
   
-  .memo-time {
-    font-size: 12px;
-    color: #666;
+  .memo-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    
+    .el-tag {
+      background: rgba(16, 185, 129, 0.1);
+      border: none;
+      color: #10B981;
+    }
+    
+    .memo-time {
+      font-size: 12px;
+      color: #64748B;
+    }
+  }
+  
+  &:hover .memo-time {
+    color: #94A3B8;
   }
 }
 
@@ -539,13 +669,14 @@ const handleSaveGroup = async () => {
   display: flex;
   justify-content: center;
   margin-top: 32px;
+  padding: 16px;
 }
 
 // 响应式布局
 @media (max-width: 768px) {
   .sidebar {
     position: fixed;
-    left: -240px;
+    left: -260px;
     top: 64px;
     bottom: 0;
     z-index: 99;
