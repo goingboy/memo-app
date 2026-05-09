@@ -43,7 +43,7 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { ArrowLeft } from '@element-plus/icons-vue'
-import { updateProfile, uploadAvatar } from '@/api/user'
+import { updateProfile, uploadAvatar } from '@/api/auth'
 import { useUserStore } from '@/stores/user'
 
 const userStore = useUserStore()
