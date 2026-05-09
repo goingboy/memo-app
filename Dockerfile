@@ -3,12 +3,10 @@ FROM maven:3.9-eclipse-temurin:21 AS builder
 
 WORKDIR /build
 
-# 先复制pom.xml，利用Docker缓存依赖
-COPY server/pom.xml .
-RUN mvn dependency:go-offline -B
+# 复制整个server目录
+COPY server/ .
 
-# 复制源代码并构建
-COPY server/src ./src
+# 构建项目
 RUN mvn clean package -DskipTests -B
 
 # 第二阶段：运行
@@ -19,10 +17,10 @@ WORKDIR /app
 # 从构建阶段复制jar文件
 COPY --from=builder /build/target/*.jar app.jar
 
-# 创建上传目录
-RUN mkdir -p /app/uploads/avatars /app/uploads/images /app/data
+# 创建必要目录
+RUN mkdir -p /app/data /app/uploads
 
-# 暴露端口（HF Spaces 要求 7860）
+# 暴露端口
 EXPOSE 7860
 
 # 设置环境变量
